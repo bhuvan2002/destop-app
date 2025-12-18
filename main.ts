@@ -23,10 +23,9 @@ function createWindow() {
   mainWindow.maximize();
   mainWindow.show();
 
-  const indexHtmlPath = path.join(
-    __dirname,
-    "../../FE/dist/index.html"
-  );
+  const indexHtmlPath = isDev
+    ? path.join(__dirname, "../../FE/dist/index.html")
+    : path.join(process.resourcesPath, "app", "FE/dist/index.html");
 
   mainWindow.loadFile(indexHtmlPath);
 
@@ -36,10 +35,9 @@ function createWindow() {
 }
 
 function startBackend() {
-  const backendPath = path.join(
-    __dirname,
-    "../../BE/dist/server.js"
-  );
+  const backendPath = isDev
+    ? path.join(__dirname, "../../BE/dist/server.js")
+    : path.join(process.resourcesPath, "app", "BE/dist/server.js");
 
   backendProcess = spawn("node", [backendPath]);
 
