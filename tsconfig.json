@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+
+    "rootDir": ".",
+    "outDir": "dist",
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    "types": ["node", "electron"],
+
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "verbatimModuleSyntax": false,
+    "isolatedModules": false
+  },
+  "include": ["*.ts"]
+}

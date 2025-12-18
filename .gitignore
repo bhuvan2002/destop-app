@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+release/
+
+# electron unpacked
+win-unpacked/
+
+# logs
+*.log
+
+# env
+.env

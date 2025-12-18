@@ -1,0 +1,37 @@
+{
+  "name": "bhuvan-desktop-app",
+  "version": "1.0.0",
+  "description": "Bhuvan React + Node Desktop Application",
+  "author": "Bhuvan",
+
+  "main": "dist/main.js",
+
+  "scripts": {
+    "start": "electron .",
+    "build": "tsc && electron-builder"
+  },
+
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/electron": "^30.0.0"
+  },
+
+  "build": {
+    "appId": "com.bhuvan.desktopapp",
+    "productName": "BhuvanApp",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "../BE/dist/**/*",
+      "../FE/dist/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
