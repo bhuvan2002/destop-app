@@ -14,6 +14,7 @@
   "devDependencies": {
     "electron": "^30.0.0",
     "electron-builder": "^26.0.12",
+    "electron-updater": "^6.1.7",
     "typescript": "^5.0.0",
     "@types/node": "^20.0.0",
     "@types/electron": "^30.0.0"
@@ -22,14 +23,25 @@
   "build": {
     "appId": "com.bhuvan.desktopapp",
     "productName": "BhuvanApp",
+
     "directories": {
       "output": "release"
     },
+
     "files": [
       "dist/**/*",
       "../BE/dist/**/*",
       "../FE/dist/**/*"
     ],
+
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "bhuvan2002",
+        "repo": "bhuvan-app-desktop"
+      }
+    ],
+
     "win": {
       "target": "nsis"
     }
