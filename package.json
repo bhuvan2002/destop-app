@@ -11,10 +11,13 @@
     "build": "tsc && electron-builder"
   },
 
+  "dependencies": {
+    "electron-updater": "^6.1.7"
+  },
+
   "devDependencies": {
     "electron": "^30.0.0",
     "electron-builder": "^26.0.12",
-    "electron-updater": "^6.1.7",
     "typescript": "^5.0.0",
     "@types/node": "^20.0.0",
     "@types/electron": "^30.0.0"
