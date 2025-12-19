@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
+import fs from "fs";
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { autoUpdater } from "electron-updater";
 
@@ -12,42 +13,69 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    show: false, // Don't show until maximized
+    show: false,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false
     }
   });
 
-  // Maximize the window
   mainWindow.maximize();
   mainWindow.show();
 
   const indexHtmlPath = isDev
     ? path.join(__dirname, "../../FE/dist/index.html")
-    : path.join(process.resourcesPath, "app", "FE/dist/index.html");
+    : path.join(app.getAppPath(), "FE/dist/index.html");
+
+  console.log("📂 UI Path:", indexHtmlPath);
+
+  if (!fs.existsSync(indexHtmlPath)) {
+    console.error("❌ UI file not found at:", indexHtmlPath);
+  }
 
   mainWindow.loadFile(indexHtmlPath);
 
-  mainWindow.webContents.on("did-fail-load", (_, code, desc) => {
-    console.error("❌ Failed to load UI:", code, desc);
+  mainWindow.webContents.on("did-fail-load", (_, code, desc, validatedURL) => {
+    console.error("❌ Failed to load UI:", code, desc, "URL:", validatedURL);
   });
 }
 
 function startBackend() {
-  const backendPath = isDev
+  let backendPath = isDev
     ? path.join(__dirname, "../../BE/dist/server.js")
-    : path.join(process.resourcesPath, "app", "BE/dist/server.js");
+    : path.join(process.resourcesPath, "app.asar.unpacked/BE/dist/server.js");
 
-  backendProcess = spawn("node", [backendPath]);
+  console.log("🚀 Backend Path:", backendPath);
+
+  if (!fs.existsSync(backendPath)) {
+    console.error("❌ Backend file not found at:", backendPath);
+    // Try fallback path if unpacked path fails
+    const fallbackPath = path.join(app.getAppPath(), "BE/dist/server.js");
+    console.log("尝试备选路径 (Fallback):", fallbackPath);
+    if (fs.existsSync(fallbackPath)) {
+      backendPath = fallbackPath;
+    } else {
+      return; // Don't try to spawn if not found
+    }
+  }
+
+  backendProcess = spawn("node", [backendPath], {
+    env: {
+      ...process.env,
+      // Pass DATABASE_URL if available or assume it exists in .env
+    }
+  });
 
   backendProcess.stdout.on("data", (data: Buffer) => {
-    // Optional: Log backend output if needed, or silence it
-    // console.log("🟦 Backend:", data.toString());
+    console.log("🟦 Backend:", data.toString());
   });
 
   backendProcess.stderr.on("data", (data: Buffer) => {
     console.error("🟥 Backend error:", data.toString());
+  });
+
+  backendProcess.on("error", (err) => {
+    console.error("❌ Failed to start backend process:", err);
   });
 
   backendProcess.on("exit", (code: number | null) => {
