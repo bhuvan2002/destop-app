@@ -97,6 +97,9 @@ app.whenReady().then(() => {
 
   autoUpdater.on("update-available", (info) => {
     console.log("✨ Update available:", info.version);
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript(`console.log("Update available: ${info.version}")`);
+    }
   });
 
   autoUpdater.on("update-not-available", (info) => {
@@ -105,21 +108,26 @@ app.whenReady().then(() => {
 
   autoUpdater.on("error", (err) => {
     console.error("❌ Error in auto-updater:", err);
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript(`console.error("Auto-updater error: ${err.message}")`);
+    }
   });
 
   autoUpdater.on("download-progress", (progressObj) => {
-    let log_message = "Download speed: " + progressObj.bytesPerSecond;
-    log_message = log_message + " - Downloaded " + progressObj.percent + "%";
-    log_message = log_message + " (" + progressObj.transferred + "/" + progressObj.total + ")";
+    let log_message = "Download speed: " + Math.round(progressObj.bytesPerSecond / 1024) + " KB/s";
+    log_message = log_message + " - Downloaded " + Math.round(progressObj.percent) + "%";
     console.log(log_message);
   });
 
   autoUpdater.on("update-downloaded", (info) => {
-    console.log("📦 Update downloaded; will install in 5 seconds");
-    // Wait 5 seconds, then quit and install
+    console.log("📦 Update downloaded; version:", info.version);
+    // Notify user via console or a small alert if needed
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript('alert("A new update has been downloaded and will be installed. The app will restart now.")');
+    }
     setTimeout(() => {
       autoUpdater.quitAndInstall();
-    }, 5000);
+    }, 3000);
   });
 });
 
