@@ -64,7 +64,8 @@
       {
         "provider": "github",
         "owner": "bhuvan2002",
-        "repo": "destop-app"
+        "repo": "destop-app",
+        "releaseType": "release"
       }
     ],
     "win": {

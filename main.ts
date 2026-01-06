@@ -89,27 +89,37 @@ app.whenReady().then(() => {
 
   if (!isDev) {
     autoUpdater.checkForUpdatesAndNotify();
+    // Check every 5 minutes
+    setInterval(() => {
+      autoUpdater.checkForUpdates();
+    }, 5 * 60 * 1000);
   }
 
   autoUpdater.on("checking-for-update", () => {
     console.log("🔍 Checking for update...");
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript(`console.log("Auto-updater: Checking for update...")`);
+    }
   });
 
   autoUpdater.on("update-available", (info) => {
     console.log("✨ Update available:", info.version);
     if (mainWindow) {
-      mainWindow.webContents.executeJavaScript(`console.log("Update available: ${info.version}")`);
+      mainWindow.webContents.executeJavaScript(`console.log("Auto-updater: ✨ Update available: ${info.version}")`);
     }
   });
 
   autoUpdater.on("update-not-available", (info) => {
     console.log("✅ Update not available.");
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript(`console.log("Auto-updater: ✅ Update not available.")`);
+    }
   });
 
   autoUpdater.on("error", (err) => {
     console.error("❌ Error in auto-updater:", err);
     if (mainWindow) {
-      mainWindow.webContents.executeJavaScript(`console.error("Auto-updater error: ${err.message}")`);
+      mainWindow.webContents.executeJavaScript(`console.error("Auto-updater ❌ Error: ${err.message}")`);
     }
   });
 
@@ -117,11 +127,13 @@ app.whenReady().then(() => {
     let log_message = "Download speed: " + Math.round(progressObj.bytesPerSecond / 1024) + " KB/s";
     log_message = log_message + " - Downloaded " + Math.round(progressObj.percent) + "%";
     console.log(log_message);
+    if (mainWindow) {
+      mainWindow.webContents.executeJavaScript(`console.log("Auto-updater: ⏳ Downloading: ${Math.round(progressObj.percent)}%")`);
+    }
   });
 
   autoUpdater.on("update-downloaded", (info) => {
     console.log("📦 Update downloaded; version:", info.version);
-    // Notify user via console or a small alert if needed
     if (mainWindow) {
       mainWindow.webContents.executeJavaScript('alert("A new update has been downloaded and will be installed. The app will restart now.")');
     }
